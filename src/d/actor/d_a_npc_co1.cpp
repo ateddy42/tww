@@ -6,9 +6,34 @@
 #include "d/dolzel_rel.h" // IWYU pragma: keep
 #include "d/actor/d_a_npc_co1.h"
 
+class daNpc_Co1_HIO_c : public mDoHIO_entry_c {
+public:
+    daNpc_Co1_HIO_c();
+    virtual ~daNpc_Co1_HIO_c() {
+    }
+    void genMessage(JORMContext* ctx) {
+        UNUSED(ctx);
+    }
+
+public:
+    /* 0x04 */ s8 field_0x04;
+    /* 0x05 */ u8 field_0x05[0x08 - 0x05];
+    /* 0x08 */ s32 field_0x08;
+    /* 0x0C */ u8 field_0x0C[0x38 - 0x0C];
+}; // Size: 0x38
+
+static char* l_evn_tbl[] = {
+    "Contact",
+    "Red_Ltr",
+};
+
 /* 000000EC-00000150       .text __ct__15daNpc_Co1_HIO_cFv */
 daNpc_Co1_HIO_c::daNpc_Co1_HIO_c() {
-    /* Nonmatching */
+    static u32 a_prm_tbl[] = { 0x20002328, 0xE000DCD8, 0x00000000, 0x00000000, 0x04000400, 0x42B60000,
+                               0x000000FF, 0x00960000, 0x42200000, 0x41A00000, 0x02000040 };
+    memcpy(&field_0x0C, a_prm_tbl, 0x2C);
+    field_0x04 = -1;
+    field_0x08 = -1;
 }
 
 /* 00000198-000001E4       .text nodeCallBack_Co1__FP7J3DNodei */

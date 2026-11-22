@@ -173,12 +173,4 @@ public:
     /* 0x863 */ u8 field_0x863;
 }; // Size: 0x864
 
-class daNpc_Co1_HIO_c {
-public:
-    daNpc_Co1_HIO_c();
-
-public:
-    /* Place member variables here */
-};
-
 #endif /* D_A_NPC_CO1_H */
