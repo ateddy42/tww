@@ -72,7 +72,7 @@ void daNpc_Co1_c::plyTexPttrnAnm() {
 }
 
 /* 00000C44-00000C80       .text setAnm_tex__11daNpc_Co1_cFSc */
-void daNpc_Co1_c::setAnm_tex(signed char) {
+void daNpc_Co1_c::setAnm_tex(s8) {
     /* Nonmatching */
 }
 
@@ -102,7 +102,7 @@ void daNpc_Co1_c::control_anmTag() {
 }
 
 /* 00000E58-00000EF8       .text chg_anmAtr__11daNpc_Co1_cFUc */
-void daNpc_Co1_c::chg_anmAtr(unsigned char) {
+void daNpc_Co1_c::chg_anmAtr(u8) {
     /* Nonmatching */
 }
 
@@ -117,7 +117,7 @@ void daNpc_Co1_c::setAnm_ATR(int) {
 }
 
 /* 0000105C-00001120       .text anmAtr__11daNpc_Co1_cFUs */
-void daNpc_Co1_c::anmAtr(unsigned short) {
+void daNpc_Co1_c::anmAtr(u16) {
     /* Nonmatching */
 }
 
@@ -157,7 +157,7 @@ void daNpc_Co1_c::lookBack() {
 }
 
 /* 00001734-000017EC       .text next_msgStatus__11daNpc_Co1_cFPUl */
-void daNpc_Co1_c::next_msgStatus(unsigned long*) {
+u16 daNpc_Co1_c::next_msgStatus(u32*) {
     /* Nonmatching */
 }
 
@@ -167,7 +167,7 @@ void daNpc_Co1_c::getMsg_CO1_0() {
 }
 
 /* 00001894-000018D0       .text getMsg__11daNpc_Co1_cFv */
-void daNpc_Co1_c::getMsg() {
+u32 daNpc_Co1_c::getMsg() {
     /* Nonmatching */
 }
 
@@ -242,7 +242,7 @@ void daNpc_Co1_c::set_action(int (daNpc_Co1_c::*)(void*), void*) {
 }
 
 /* 00001F6C-00001FD4       .text setStt__11daNpc_Co1_cFSc */
-void daNpc_Co1_c::setStt(signed char) {
+void daNpc_Co1_c::setStt(s8) {
     /* Nonmatching */
 }
 
