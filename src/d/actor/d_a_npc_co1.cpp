@@ -5,6 +5,7 @@
 
 #include "d/dolzel_rel.h" // IWYU pragma: keep
 #include "d/actor/d_a_npc_co1.h"
+#include "res/Object/Co.h"
 
 class daNpc_Co1_HIO_c : public mDoHIO_entry_c {
 public:
@@ -120,18 +121,28 @@ void daNpc_Co1_c::setMtx(bool) {
 }
 
 /* 000008E4-000008F8       .text anmNum_toResID__11daNpc_Co1_cFi */
-u32 daNpc_Co1_c::anmNum_toResID(int) {
-    /* Nonmatching */
+u32 daNpc_Co1_c::anmNum_toResID(int i_idx) {
+    static const u32 a_bck_resID_tbl[] = { dRes_ID_CO_BCK_CO_WAIT01_e,  dRes_ID_CO_BCK_CO_WAIT02_e, dRes_ID_CO_BCK_CO_MIGAMAE_e, dRes_ID_CO_BCK_CO_OKIRU_e,
+                                           dRes_ID_CO_BCK_CO_READ_e,    dRes_ID_CO_BCK_CO_TALK01_e, dRes_ID_CO_BCK_CO_TALK02_e,  dRes_ID_CO_BCK_CO_SWAIT01_e,
+                                           dRes_ID_CO_BCK_CO_UKETORI_e, dRes_ID_CO_BCK_CO_OKIRU_e,  dRes_ID_CO_BCK_CO_MIGAMAE_e };
+    return a_bck_resID_tbl[i_idx];
 }
 
 /* 000008F8-0000090C       .text anmNum_toResID_prl__11daNpc_Co1_cFi */
-u32 daNpc_Co1_c::anmNum_toResID_prl(int) {
-    /* Nonmatching */
+u32 daNpc_Co1_c::anmNum_toResID_prl(int i_idx) {
+    static const u32 a_bck_resID_tbl[] = { dRes_ID_CO_BCK_COPEAL_WAIT01_e, dRes_ID_CO_BCK_COPEAL_WAIT02_e,  dRes_ID_CO_BCK_COPEAL_MIGAMAE_e,
+                                           dRes_ID_CO_BCK_COPEAL_OKIRU_e,  dRes_ID_CO_BCK_COPEAL_READ_e,    dRes_ID_CO_BCK_COPEAL_TALK01_e,
+                                           dRes_ID_CO_BCK_COPEAL_TALK02_e, dRes_ID_CO_BCK_COPEAL_SWAIT01_e, dRes_ID_CO_BCK_COPEAL_UKETORI_e,
+                                           dRes_ID_CO_BCK_COPEAL_OKIRU_e,  dRes_ID_CO_BCK_COPEAL_MIGAMAE_e };
+    return a_bck_resID_tbl[i_idx];
 }
 
 /* 0000090C-00000920       .text btpNum_toResID__11daNpc_Co1_cFi */
-u32 daNpc_Co1_c::btpNum_toResID(int) {
-    /* Nonmatching */
+u32 daNpc_Co1_c::btpNum_toResID(int i_idx) {
+    static const u32 a_btp_resID_tbl[] = { dRes_ID_CO_BTP_FUAN_e,   dRes_ID_CO_BTP_KIRI_e,  dRes_ID_CO_BTP_NIKO_e,   dRes_ID_CO_BTP_OKORI_e,
+                                           dRes_ID_CO_BTP_NAGAME_e, dRes_ID_CO_BTP_OKIRU_e, dRes_ID_CO_BTP_MIGAMAE_e };
+
+    return a_btp_resID_tbl[i_idx];
 }
 
 /* 00000920-00000A30       .text setBtp__11daNpc_Co1_cFbi */
@@ -145,8 +156,8 @@ void daNpc_Co1_c::setBtk(bool) {
 }
 
 /* 00000B30-00000B58       .text iniTexPttrnAnm__11daNpc_Co1_cFb */
-bool daNpc_Co1_c::iniTexPttrnAnm(bool) {
-    /* Nonmatching */
+bool daNpc_Co1_c::iniTexPttrnAnm(bool i_modify) {
+    return setBtp(i_modify, mBtpNum);
 }
 
 /* 00000B58-00000C44       .text plyTexPttrnAnm__11daNpc_Co1_cFv */
@@ -155,8 +166,11 @@ void daNpc_Co1_c::plyTexPttrnAnm() {
 }
 
 /* 00000C44-00000C80       .text setAnm_tex__11daNpc_Co1_cFSc */
-void daNpc_Co1_c::setAnm_tex(s8) {
-    /* Nonmatching */
+void daNpc_Co1_c::setAnm_tex(s8 i_param1) {
+    if (mBtpNum != i_param1) {
+        mBtpNum = i_param1;
+        iniTexPttrnAnm(true);
+    }
 }
 
 /* 00000C80-00000D64       .text setAnm_anm__11daNpc_Co1_cFPQ211daNpc_Co1_c9anm_prm_c */
