@@ -80,7 +80,7 @@ bool daNpc_Co1_c::init_CO1_0() {
 /* 00000410-00000588       .text createInit__11daNpc_Co1_cFv */
 bool daNpc_Co1_c::createInit() {
     for (int i = 0; i < 3; i++) {
-        field_0x7F2[i] = dComIfGp_evmng_getEventIdx(l_evn_tbl[i]);
+        mEventIdTable[i] = dComIfGp_evmng_getEventIdx(l_evn_tbl[i]);
     }
     attention_info.flags = fopAc_Attn_ACTION_SPEAK_e | fopAc_Attn_LOCKON_TALK_e;
     attention_info.distances[fopAc_Attn_TYPE_TALK_e] = 0x46;
@@ -363,14 +363,31 @@ void daNpc_Co1_c::eventOrder() {
             fopAcM_orderSpeakEvent(this);
         }
     } else if (mTalkOrder >= 3) {
-        field_0x7F8 = mTalkOrder - 3;
-        fopAcM_orderOtherEventId(this, field_0x7F2[field_0x7F8]);
+        mEventIdx = mTalkOrder - 3;
+        fopAcM_orderOtherEventId(this, mEventIdTable[mEventIdx]);
     }
 }
 
 /* 000011B8-00001288       .text checkOrder__11daNpc_Co1_cFv */
 void daNpc_Co1_c::checkOrder() {
-    /* Nonmatching */
+    if (eventInfo.checkCommandDemoAccrpt()) {
+        if (dComIfGp_evmng_startCheck(mEventIdTable[mEventIdx])) {
+            switch (mEventIdx) {
+                case 1:
+                    fopAcM_OffStatus(this, fopAcStts_UNK4000_e);
+                    break;
+                case 2:
+                    field_0x85F = 0;
+                    break;
+                case 0:
+                    break;
+            }
+            mTalkOrder = 0;
+        }
+    } else if (eventInfo.getCommand() == dEvtCmd_INTALK_e && (mTalkOrder == 1 || mTalkOrder == 2)) {
+        mTalkOrder = 0;
+        mbTalking = true;
+    }
 }
 
 /* 00001288-000013AC       .text setCollision_SP___11daNpc_Co1_cFv */
@@ -390,7 +407,7 @@ bool daNpc_Co1_c::chk_talk() {
 
 /* 00001554-00001594       .text chk_partsNotMove__11daNpc_Co1_cFv */
 bool daNpc_Co1_c::chk_partsNotMove() {
-    /* Nonmatching */
+    return field_0x7EC == m_jnt.getHead_y() && field_0x7EE == m_jnt.getBackbone_y() && field_0x7F0 == current.angle.y;
 }
 
 /* 00001594-00001734       .text lookBack__11daNpc_Co1_cFv */
@@ -410,7 +427,13 @@ u32 daNpc_Co1_c::getMsg_CO1_0() {
 
 /* 00001894-000018D0       .text getMsg__11daNpc_Co1_cFv */
 u32 daNpc_Co1_c::getMsg() {
-    /* Nonmatching */
+    u32 ret = 0;
+    switch (mSpecificType) {
+        case 0:
+            ret = getMsg_CO1_0();
+            break;
+    }
+    return ret;
 }
 
 /* 000018D0-00001950       .text chkAttention__11daNpc_Co1_cFv */
