@@ -89,7 +89,7 @@ bool daNpc_Co1_c::createInit() {
     mLookAtPos = current.pos;
     field_0x81E = true;
     field_0x72C.setActorInfo2("Co1", this);
-    field_0x859 = 0xB;
+    mAnmNum = 0xB;
 
     bool init_success;
     switch (mSpecificType) {
@@ -146,13 +146,30 @@ u32 daNpc_Co1_c::btpNum_toResID(int i_idx) {
 }
 
 /* 00000920-00000A30       .text setBtp__11daNpc_Co1_cFbi */
-bool daNpc_Co1_c::setBtp(bool, int) {
-    /* Nonmatching */
+bool daNpc_Co1_c::setBtp(bool i_modify, int i_btpNum) {
+    J3DModelData* model_data = mpMorf->getModel()->getModelData();
+    int resID = btpNum_toResID(i_btpNum);
+    field_0x6FC = reinterpret_cast<J3DAnmTexPattern*>(dComIfG_getObjectIDRes("Co", resID));
+    JUT_ASSERT(0x1CE, field_0x6FC != NULL);
+    int initVal = field_0x700.init(model_data, field_0x6FC, 1, 2, 1.0f, 0, -1, i_modify, 0);
+    bool o_retval = initVal == 1;
+    if (o_retval) {
+        mBlinkFrame = 0;
+        mBlinkTimer = 0;
+    }
+    return o_retval;
 }
 
 /* 00000A30-00000B30       .text setBtk__11daNpc_Co1_cFb */
-void daNpc_Co1_c::setBtk(bool) {
-    /* Nonmatching */
+bool daNpc_Co1_c::setBtk(bool i_modify) {
+    J3DModelData* model_data = mpPearlMorf->getModel()->getModelData();
+    m_prl_btk = (J3DAnmTextureSRTKey*)dComIfG_getObjectIDRes("Co", dRes_ID_CO_BTK_CO_PEAL_e);
+    JUT_ASSERT(0x1EA, m_prl_btk != NULL);
+    bool ret = field_0x6DC.init(model_data, m_prl_btk, 1, 2, 1.0f, 0, -1, i_modify, 0) == TRUE;
+    if (ret) {
+        field_0x6F0 = 0;
+    }
+    return ret;
 }
 
 /* 00000B30-00000B58       .text iniTexPttrnAnm__11daNpc_Co1_cFb */
@@ -162,7 +179,21 @@ bool daNpc_Co1_c::iniTexPttrnAnm(bool i_modify) {
 
 /* 00000B58-00000C44       .text plyTexPttrnAnm__11daNpc_Co1_cFv */
 void daNpc_Co1_c::plyTexPttrnAnm() {
-    /* Nonmatching */
+    field_0x6F0++;
+    if (field_0x6F0 >= m_prl_btk->getFrameMax()) {
+        field_0x6F0 = 0;
+    }
+    if (mBtpNum == 6 || mBtpNum == 5 || !cLib_calcTimer(&mBlinkTimer)) {
+        mBlinkFrame++;
+        if (mBlinkFrame >= field_0x6FC->getFrameMax()) {
+            if (mBtpNum == 6 || mBtpNum == 5) {
+                mBlinkFrame = field_0x6FC->getFrameMax();
+            } else {
+                mBlinkTimer = cM_rndF(60.0f) + 30.0f;
+                mBlinkFrame = 0;
+            }
+        }
+    }
 }
 
 /* 00000C44-00000C80       .text setAnm_tex__11daNpc_Co1_cFSc */
@@ -174,53 +205,167 @@ void daNpc_Co1_c::setAnm_tex(s8 i_param1) {
 }
 
 /* 00000C80-00000D64       .text setAnm_anm__11daNpc_Co1_cFPQ211daNpc_Co1_c9anm_prm_c */
-BOOL daNpc_Co1_c::setAnm_anm(daNpc_Co1_c::anm_prm_c*) {
-    /* Nonmatching */
+BOOL daNpc_Co1_c::setAnm_anm(daNpc_Co1_c::anm_prm_c* i_anmPrmP) {
+    if (mAnmNum == i_anmPrmP->anmNum) {
+        return TRUE;
+    }
+    mAnmNum = i_anmPrmP->anmNum;
+    u32 resID = anmNum_toResID(mAnmNum);
+    dNpc_setAnmIDRes(mpMorf, i_anmPrmP->loopMode, i_anmPrmP->morf, i_anmPrmP->speed, resID, -1, "Co");
+    u32 prlResID = anmNum_toResID_prl(mAnmNum);
+    dNpc_setAnmIDRes(mpPearlMorf, i_anmPrmP->loopMode, 0.0f, 0.0f, prlResID, -1, "Co");
+    mFrame = 0.0f;
+    field_0x809 = 0;
+    mbMorfAnimStopped = false;
+    return TRUE;
 }
 
 /* 00000D64-00000DD0       .text setAnm_NUM__11daNpc_Co1_cFii */
-void daNpc_Co1_c::setAnm_NUM(int, int) {
-    /* Nonmatching */
+void daNpc_Co1_c::setAnm_NUM(int i_idx, int i_flag) {
+    static anm_prm_c a_anm_prm_tbl[] = {
+        { 0, 0, 8.0f, 1.0f, 2 }, { 1, 4, 8.0f, 1.0f, 2 }, { 2, 6, 8.0f, 1.0f, 0 }, { 3, 5, 8.0f, 1.0f, 0 },  { 4, 4, 8.0f, 1.0f, 2 },   { 5, 0, 8.0f, 1.0f, 2 },
+        { 6, 3, 8.0f, 1.0f, 2 }, { 7, 4, 8.0f, 1.0f, 2 }, { 8, 0, 8.0f, 1.0f, 0 }, { 9, 5, 8.0f, -1.0f, 0 }, { 10, 6, 8.0f, -1.0f, 0 }, { 7, 0, 8.0f, 1.0f, 2 },
+    };
+    if (i_flag != 0) {
+        setAnm_tex(a_anm_prm_tbl[i_idx].btpNum);
+    }
+    setAnm_anm(&a_anm_prm_tbl[i_idx]);
 }
 
 /* 00000DD0-00000E50       .text setAnm__11daNpc_Co1_cFv */
-void daNpc_Co1_c::setAnm() {
-    /* Nonmatching */
+bool daNpc_Co1_c::setAnm() {
+    static anm_prm_c a_anm_prm_tbl[] = { { -1, -1, 0.0f, 0.0f, -1 }, { 1, 4, 8.0f, 1.0f, 2 },    { -1, -1, 0.0f, 0.0f, -1 }, { 3, 5, 8.0f, 1.0f, 0 },
+                                         { 7, 0, 8.0f, 1.0f, 2 },    { -1, -1, 0.0f, 0.0f, -1 }, { 4, 4, 8.0f, 1.0f, 2 },    { 10, 6, 8.0f, -1.0f, 0 } };
+    if (a_anm_prm_tbl[mStatus].btpNum >= 0) {
+        setAnm_tex(a_anm_prm_tbl[mStatus].btpNum);
+    }
+    if (a_anm_prm_tbl[mStatus].anmNum >= 0) {
+        setAnm_anm(&a_anm_prm_tbl[mStatus]);
+    }
+    return true;
 }
 
 /* 00000E50-00000E54       .text chg_anmTag__11daNpc_Co1_cFv */
 void daNpc_Co1_c::chg_anmTag() {
-    /* Nonmatching */
+    return;
 }
 
 /* 00000E54-00000E58       .text control_anmTag__11daNpc_Co1_cFv */
 void daNpc_Co1_c::control_anmTag() {
-    /* Nonmatching */
+    return;
 }
 
 /* 00000E58-00000EF8       .text chg_anmAtr__11daNpc_Co1_cFUc */
-void daNpc_Co1_c::chg_anmAtr(u8) {
-    /* Nonmatching */
+void daNpc_Co1_c::chg_anmAtr(u8 i_param1) {
+    if (i_param1 >= 14 || i_param1 == mAnmAtr) {
+        return;
+    }
+    field_0x85F = 1;
+    switch (i_param1) {
+        case 3:
+        case 4:
+        case 5:
+        case 7:
+        case 11:
+            field_0x85F = 0;
+            break;
+        case 13:
+            set_target(1);
+            break;
+    }
+    mAnmAtr = i_param1;
+    setAnm_ATR(1);
 }
 
 /* 00000EF8-00000FF4       .text control_anmAtr__11daNpc_Co1_cFv */
 void daNpc_Co1_c::control_anmAtr() {
-    /* Nonmatching */
+    switch (mAnmAtr) {
+        case 2:
+            if (mbMorfAnimStopped) {
+                setAnm_NUM(7, 1);
+                mAnmAtr = 6;
+            }
+            break;
+        case 3:
+            if (mbMorfAnimStopped) {
+                setAnm_NUM(4, 1);
+                mAnmAtr = 10;
+            }
+            break;
+        case 7:
+            if (mbMorfAnimStopped) {
+                setAnm_NUM(6, 1);
+                mAnmAtr = 5;
+            }
+            break;
+        case 8:
+            if (mbMorfAnimStopped) {
+                setAnm_NUM(7, 1);
+                mAnmAtr = 6;
+            }
+            break;
+        case 9:
+            if (mbMorfAnimStopped) {
+                setAnm_NUM(1, 1);
+                mAnmAtr = 1;
+            }
+            break;
+        case 13:
+            break;
+    }
 }
 
 /* 00000FF4-0000105C       .text setAnm_ATR__11daNpc_Co1_cFi */
-void daNpc_Co1_c::setAnm_ATR(int) {
-    /* Nonmatching */
+void daNpc_Co1_c::setAnm_ATR(int i_param1) {
+    static anm_prm_c a_anm_prm_tbl[] = {
+        { 0, 0, 8.0f, 1.0f, 2 }, { 1, 4, 8.0f, 1.0f, 2 }, { 3, 5, 8.0f, 1.0f, 0 }, { 8, 0, 8.0f, 1.0f, 0 },   { 5, 0, 8.0f, 1.0f, 2 },
+        { 6, 3, 8.0f, 1.0f, 2 }, { 7, 4, 8.0f, 1.0f, 2 }, { 2, 6, 8.0f, 1.0f, 0 }, { 10, 6, 8.0f, -1.0f, 0 }, { 9, 5, 8.0f, -1.0f, 0 },
+        { 4, 4, 8.0f, 1.0f, 2 }, { 5, 4, 8.0f, 1.0f, 2 }, { 5, 0, 8.0f, 1.0f, 2 }, { 6, 3, 8.0f, 1.0f, 2 },
+    };
+    if (i_param1) {
+        setAnm_tex(a_anm_prm_tbl[mAnmAtr].btpNum);
+    }
+    setAnm_anm(&a_anm_prm_tbl[mAnmAtr]);
 }
 
 /* 0000105C-00001120       .text anmAtr__11daNpc_Co1_cFUs */
-void daNpc_Co1_c::anmAtr(u16) {
-    /* Nonmatching */
+void daNpc_Co1_c::anmAtr(u16 i_param1) {
+    switch (i_param1) {
+        case 0x6:
+            {
+                if (field_0x863 == 0) {
+                    mAnmAtr = -1;
+                    chg_anmAtr(dComIfGp_getMesgAnimeAttrInfo());
+                    field_0x863++;
+                }
+                u32 tagInfo = dComIfGp_getMesgAnimeTagInfo();
+                dComIfGp_clearMesgAnimeTagInfo();
+                if (tagInfo != 0xFF && mAnmTag != tagInfo) {
+                    mAnmTag = tagInfo;
+                    chg_anmTag();
+                }
+                break;
+            }
+        case 0xE:
+            field_0x863 = 0;
+            break;
+    }
+    control_anmTag();
+    control_anmAtr();
 }
 
 /* 00001120-000011B8       .text eventOrder__11daNpc_Co1_cFv */
 void daNpc_Co1_c::eventOrder() {
-    /* Nonmatching */
+    if (mTalkOrder == 1 || mTalkOrder == 2) {
+        eventInfo.onCondition(dEvtCnd_CANTALK_e);
+        eventInfo.onCondition(dEvtCnd_CANTALKITEM_e);
+        if (mTalkOrder == 1) {
+            fopAcM_orderSpeakEvent(this);
+        }
+    } else if (mTalkOrder >= 3) {
+        field_0x7F8 = mTalkOrder - 3;
+        fopAcM_orderOtherEventId(this, field_0x7F2[field_0x7F8]);
+    }
 }
 
 /* 000011B8-00001288       .text checkOrder__11daNpc_Co1_cFv */

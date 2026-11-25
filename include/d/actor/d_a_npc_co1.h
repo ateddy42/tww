@@ -26,13 +26,13 @@ public:
     u32 anmNum_toResID_prl(int);
     u32 btpNum_toResID(int);
     bool setBtp(bool, int);
-    void setBtk(bool);
+    bool setBtk(bool);
     bool iniTexPttrnAnm(bool);
     void plyTexPttrnAnm();
     void setAnm_tex(s8);
     BOOL setAnm_anm(anm_prm_c*);
     void setAnm_NUM(int, int);
-    void setAnm();
+    bool setAnm();
     void chg_anmTag();
     void control_anmTag();
     void chg_anmAtr(u8);
@@ -89,8 +89,8 @@ public:
     /* 0x6CD */ s8 m_bbone_jnt_num;
     /* 0x6CE */ s8 m_hnd_R_jnt_num;
     /* 0x6CF */ u8 field_0x6CF[0x6D0 - 0x6CF];
-    /* 0x6D0 */ mDoExt_McaMorf* field_0x6D0;
-    /* 0x6D4 */ J3DAnmTextureSRTKey* field_0x6D4;
+    /* 0x6D0 */ mDoExt_McaMorf* mpPearlMorf;
+    /* 0x6D4 */ J3DAnmTextureSRTKey* m_prl_btk;
     /* 0x6D8 */ s8 m_prl_jnt_num;
     /* 0x6D9 */ u8 field_0x6D9[0x6DC - 0x6D9];
     /* 0x6DC */ mDoExt_btkAnm field_0x6DC;
@@ -100,9 +100,9 @@ public:
     /* 0x6F8 */ u32 field_0x6F8;
     /* 0x6FC */ J3DAnmTexPattern* field_0x6FC;
     /* 0x700 */ mDoExt_btpAnm field_0x700;
-    /* 0x714 */ u8 field_0x714;
+    /* 0x714 */ u8 mBlinkFrame;
     /* 0x715 */ u8 field_0x715[0x716 - 0x715];
-    /* 0x716 */ u16 field_0x716;
+    /* 0x716 */ s16 mBlinkTimer;
     /* 0x718 */ ActionFunc mCurrActionFunc;
     /* 0x724 */ u8 field_0x724[0x72C - 0x724];
     /* 0x72C */ dNpc_EventCut_c field_0x72C;
@@ -118,7 +118,7 @@ public:
     /* 0x7EC */ s16 field_0x7EC;
     /* 0x7EE */ s16 field_0x7EE;
     /* 0x7F0 */ s16 field_0x7F0;
-    /* 0x7F2 */ u16 field_0x7F2[3];
+    /* 0x7F2 */ s16 field_0x7F2[3];
     /* 0x7F8 */ s16 field_0x7F8;
     /* 0x7FA */ u8 field_0x7FA[0x7FC - 0x7FA];
     /* 0x7FC */ u16 field_0x7FC;
@@ -126,7 +126,7 @@ public:
     /* 0x802 */ s16 field_0x802;
     /* 0x804 */ s16 field_0x804;
     /* 0x806 */ u8 field_0x806[0x808 - 0x806];
-    /* 0x808 */ u8 mbMorfAnimStopped;
+    /* 0x808 */ s8 mbMorfAnimStopped;
     /* 0x809 */ u8 field_0x809;
     /* 0x80A */ u8 field_0x80A;
     /* 0x80B */ u8 field_0x80B;
@@ -157,19 +157,19 @@ public:
     /* 0x852 */ u8 field_0x852[0x854 - 0x852];
     /* 0x854 */ u8 field_0x854;
     /* 0x855 */ s8 field_0x855;
-    /* 0x856 */ u8 field_0x856;
-    /* 0x857 */ u8 field_0x857;
+    /* 0x856 */ u8 mAnmAtr;
+    /* 0x857 */ u8 mAnmTag;
     /* 0x858 */ s8 mBtpNum;
-    /* 0x859 */ s8 field_0x859;
+    /* 0x859 */ s8 mAnmNum;
     /* 0x85A */ u8 field_0x85A[0x85C - 0x85A];
-    /* 0x85C */ u8 field_0x85C;
-    /* 0x85D */ s8 field_0x85D;
+    /* 0x85C */ s8 mTalkOrder;
+    /* 0x85D */ s8 mStatus;
     /* 0x85E */ u8 field_0x85E;
     /* 0x85F */ u8 field_0x85F;
     /* 0x860 */ u8 field_0x860;
     /* 0x861 */ u8 mSpecificType;
     /* 0x862 */ u8 field_0x862;
-    /* 0x863 */ u8 field_0x863;
+    /* 0x863 */ s8 field_0x863;
 }; // Size: 0x864
 
 #endif /* D_A_NPC_CO1_H */
